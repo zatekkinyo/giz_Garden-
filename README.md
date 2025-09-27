@@ -1,8 +1,9 @@
+
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Özel Bahçe 🌸</title>
+    <title>Sana Özel Bahçe 🌸</title>
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Handlee&display=swap" rel="stylesheet"> 
     <style>
         :root {
@@ -17,17 +18,16 @@
             overflow: hidden;
             font-family: 'Handlee', cursive;
             color: #333;
-            cursor: pointer;
-            background: linear-gradient(135deg, #FFC0CB 0%, #ADD8E6 100%);
+            cursor: default; /* Varsayılan imleç */
         }
 
         /* YouTube Oynatıcısı için Gizleme Stili */
         #youtube-player {
-            position: absolute; /* Mutlak konumlandırma */
+            position: absolute;
             top: 0; left: 0;
             width: 1px; height: 1px;
-            overflow: hidden; /* Tamamen gizle */
-            display: none; /* JS ile görünür yapılıyor */
+            overflow: hidden; 
+            display: none; 
         }
 
         /* Başlık Mesajı Stili */
@@ -106,8 +106,7 @@
             overflow: hidden;
             opacity: 0;
             transition: opacity 2s ease-in-out;
-            /* Zemin tıklanabilir olmalı */
-            cursor: crosshair; 
+            cursor: crosshair; /* Tıklanabilirliği gösteren imleç */
         }
         #garden.active {
             opacity: 1;
@@ -187,12 +186,12 @@
         const continueButton = document.getElementById('continue-button');
         const welcomeScreen = document.getElementById('welcome-screen');
         const garden = document.getElementById('garden');
-        const musicPlayer = document.getElementById('youtube-player'); // Müzik kapsayıcısı
+        const musicPlayer = document.getElementById('youtube-player'); 
         
         const flowerEmojis = ['🌸', '🌺', '🌼', '🌷', '🌻', '🌹', '💐', '♥️', '♥️']; 
 
         continueButton.addEventListener('click', () => {
-            // Müzik çalmayı denemek için iframe'i görünür yap
+            // Müzik çalmayı başlatmak için YouTube oynatıcısını aktif et
             musicPlayer.style.display = 'block'; 
             
             // Hoş geldin ekranını gizle
@@ -205,9 +204,9 @@
         });
 
         garden.addEventListener('click', (event) => {
-            // SADECE aktif bahçe ekranına tıklanınca çalışır.
+            // Sadece bahçe aktifse çiçek çıkar
             if (!garden.classList.contains('active')) {
-                return; // Eğer bahçe aktif değilse hiçbir şey yapma
+                return; 
             }
             
             const flower = document.createElement('span');
@@ -215,4 +214,21 @@
             
             flower.textContent = flowerEmojis[Math.floor(Math.random() * flowerEmojis.length)];
 
-            const randomRotation = Math.floor(Math.random() * 360);
+            const randomRotation = Math.floor(Math.random() * 360); 
+            const randomSwayDuration = `${5 + Math.random() * 3}s`;
+
+            // CSS değişkenlerini ayarla
+            flower.style.setProperty('--random-rotation', `${randomRotation}deg`);
+            flower.style.setProperty('--sway-duration', randomSwayDuration);
+
+            // Tıklanan yerin koordinatlarına göre çiçeği yerleştir
+            // Emojiyi merkeze getirmek için kaydırıyoruz
+            flower.style.left = `${event.clientX - 30}px`; 
+            flower.style.top = `${event.clientY - 30}px`;
+
+            garden.appendChild(flower);
+        });
+    </script>
+
+</body>
+</html>
