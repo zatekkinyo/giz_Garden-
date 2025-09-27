@@ -2,12 +2,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sana Özel Bahçe 🌸</title>
+    <title> Özel Bahçe 🌸</title>
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Handlee&display=swap" rel="stylesheet"> 
     <style>
         :root {
-            --header-color: #5D3FD3; /* Mistik Mor */
-            --grass-color: #4CAF50; /* Canlı Çimen Yeşili */
+            --header-color: #5D3FD3;
+            --grass-color: #4CAF50;
             --sky-color-top: #87CEEB;
             --sky-color-bottom: #B0E0E6;
         }
@@ -23,7 +23,11 @@
 
         /* YouTube Oynatıcısı için Gizleme Stili */
         #youtube-player {
-            display: none; 
+            position: absolute; /* Mutlak konumlandırma */
+            top: 0; left: 0;
+            width: 1px; height: 1px;
+            overflow: hidden; /* Tamamen gizle */
+            display: none; /* JS ile görünür yapılıyor */
         }
 
         /* Başlık Mesajı Stili */
@@ -34,7 +38,7 @@
             transform: translateX(-50%);
             z-index: 50;
             font-family: 'Great Vibes', cursive;
-            font-size: 3.5em; /* Masaüstü boyutu */
+            font-size: 3.5em;
             color: var(--header-color);
             text-shadow: 2px 2px 5px rgba(0,0,0,0.4);
             opacity: 0;
@@ -68,7 +72,7 @@
         }
         #welcome-screen h1 {
             font-family: 'Great Vibes', cursive; 
-            font-size: 5em; /* Masaüstü boyutu */
+            font-size: 5em;
             color: #8A2BE2;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
             margin-bottom: 30px;
@@ -102,6 +106,8 @@
             overflow: hidden;
             opacity: 0;
             transition: opacity 2s ease-in-out;
+            /* Zemin tıklanabilir olmalı */
+            cursor: crosshair; 
         }
         #garden.active {
             opacity: 1;
@@ -109,7 +115,7 @@
 
         .flower {
             position: absolute;
-            font-size: 4.5em; /* Masaüstü boyutu */
+            font-size: 4.5em; 
             user-select: none;
             pointer-events: none;
             animation: fadeInRotate 0.7s ease-out forwards, sway var(--sway-duration, 5s) ease-in-out infinite alternate; 
@@ -120,30 +126,43 @@
         /* MOBİL UYUMLULUK (RESPONSIVE DESIGN) KISMI */
         /* ******************************************* */
         @media (max-width: 600px) {
-            /* 600 piksel altındaki (çoğu mobil ekran) cihazlar için ayarlar */
-            
             #welcome-screen h1 {
-                font-size: 3em; /* Hoş Geldin yazısını küçült */
+                font-size: 3em; 
             }
 
             #garden-title {
-                font-size: 2em; /* Bahçe başlığını küçült */
-                top: 20px; /* Üste daha yakın konumlandır */
-                width: 90%; /* Başlık için mobil ekranlarda yer aç */
+                font-size: 2em; 
+                top: 20px; 
+                width: 90%;
             }
             
             .flower {
-                font-size: 3em; /* Çiçeklerin boyutunu küçült */
+                font-size: 3em; 
             }
         }
         
-        /* Animasyonlar (Öncekiyle Aynı) */
-        @keyframes fadeInRotate { /* ... */ }
-        @keyframes sway { /* ... */ }
-        @keyframes pulseBackground { /* ... */ }
-        @keyframes slideIn { /* ... */ }
-        @keyframes bounceIn { /* ... */ }
+        /* Animasyonlar */
+        @keyframes fadeInRotate {
+            0% { opacity: 0; transform: scale(0) rotate(0deg); }
+            100% { opacity: 1; transform: scale(1) rotate(var(--random-rotation, 0deg)); }
+        }
+        
+        @keyframes sway {
+            0% { transform: translate(0px, 0px) rotate(var(--random-rotation, 0deg)); }
+            100% { transform: translate(5px, -5px) rotate(calc(var(--random-rotation, 0deg) + 2deg)); } 
+        }
 
+        @keyframes pulseBackground { 0% { background-color: #e0c3fc; } 100% { background-color: #8ec5fc; } }
+        @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes bounceIn {
+            0%, 20%, 40%, 60%, 80%, 100% { transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000); }
+            0% { opacity: 0; transform: scale3d(.3, .3, .3); }
+            20% { transform: scale3d(1.1, 1.1, 1.1); }
+            40% { transform: scale3d(.9, .9, .9); }
+            60% { opacity: 1; transform: scale3d(1.03, 1.03, 1.03); }
+            80% { transform: scale3d(.97, .97, .97); }
+            100% { opacity: 1; transform: scale3d(1, 1, 1); }
+        }
     </style>
 </head>
 <body>
@@ -168,39 +187,32 @@
         const continueButton = document.getElementById('continue-button');
         const welcomeScreen = document.getElementById('welcome-screen');
         const garden = document.getElementById('garden');
-        const musicFrame = document.getElementById('music-frame'); 
+        const musicPlayer = document.getElementById('youtube-player'); // Müzik kapsayıcısı
         
         const flowerEmojis = ['🌸', '🌺', '🌼', '🌷', '🌻', '🌹', '💐', '♥️', '♥️']; 
 
         continueButton.addEventListener('click', () => {
-            document.getElementById('youtube-player').style.display = 'block'; 
+            // Müzik çalmayı denemek için iframe'i görünür yap
+            musicPlayer.style.display = 'block'; 
             
+            // Hoş geldin ekranını gizle
             welcomeScreen.classList.add('hidden');
 
+            // Bahçe ekranını yavaşça görünür yap
             setTimeout(() => {
                 garden.classList.add('active');
             }, 1000); 
         });
 
         garden.addEventListener('click', (event) => {
+            // SADECE aktif bahçe ekranına tıklanınca çalışır.
+            if (!garden.classList.contains('active')) {
+                return; // Eğer bahçe aktif değilse hiçbir şey yapma
+            }
+            
             const flower = document.createElement('span');
             flower.classList.add('flower');
             
             flower.textContent = flowerEmojis[Math.floor(Math.random() * flowerEmojis.length)];
 
-            const randomRotation = Math.floor(Math.random() * 360); 
-            const randomSwayDuration = `${5 + Math.random() * 3}s`;
-
-            flower.style.setProperty('--random-rotation', `${randomRotation}deg`);
-            flower.style.setProperty('--sway-duration', randomSwayDuration);
-
-            // Tıklanan yerin koordinatlarına göre çiçeği yerleştir
-            flower.style.left = `${event.clientX - 30}px`; 
-            flower.style.top = `${event.clientY - 30}px`;
-
-            garden.appendChild(flower);
-        });
-    </script>
-
-</body>
-</html>
+            const randomRotation = Math.floor(Math.random() * 360);
